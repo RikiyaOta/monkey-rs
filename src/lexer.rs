@@ -26,16 +26,16 @@ impl Lexer {
 
     pub fn next_token(&mut self) -> Token {
         let token = match self.ch {
-            '=' => Self::new_token(ASSIGN.to_string(), self.ch),
-            ';' => Self::new_token(SEMICOLON.to_string(), self.ch),
-            '(' => Self::new_token(LPAREN.to_string(), self.ch),
-            ')' => Self::new_token(RPAREN.to_string(), self.ch),
-            ',' => Self::new_token(COMMA.to_string(), self.ch),
-            '+' => Self::new_token(PLUS.to_string(), self.ch),
-            '{' => Self::new_token(LBRACE.to_string(), self.ch),
-            '}' => Self::new_token(RBRACE.to_string(), self.ch),
-            '\0' => Self::new_token(EOF.to_string(), self.ch),
-            _ => panic!("Unexpected token."),
+            '=' => Self::new_token(TokenType::ASSIGN, self.ch),
+            ';' => Self::new_token(TokenType::SEMICOLON, self.ch),
+            '(' => Self::new_token(TokenType::LPAREN, self.ch),
+            ')' => Self::new_token(TokenType::RPAREN, self.ch),
+            ',' => Self::new_token(TokenType::COMMA, self.ch),
+            '+' => Self::new_token(TokenType::PLUS, self.ch),
+            '{' => Self::new_token(TokenType::LBRACE, self.ch),
+            '}' => Self::new_token(TokenType::RBRACE, self.ch),
+            '\0' => Self::new_token(TokenType::EOF, self.ch),
+            _ => panic!("Unexpected token. To do later."),
         };
 
         self.read_char();
@@ -75,44 +75,43 @@ mod tests {
 
     #[test]
     fn test_next_token() {
-        // 入力を動的に受け付けるので、String の方が適している気がする。
         let input = "=+(){},;".to_string();
 
         let test_tokens = [
             Token {
-                r#type: ASSIGN.to_string(),
+                r#type: TokenType::ASSIGN,
                 literal: "=".to_string(),
             },
             Token {
-                r#type: PLUS.to_string(),
+                r#type: TokenType::PLUS,
                 literal: "+".to_string(),
             },
             Token {
-                r#type: LPAREN.to_string(),
+                r#type: TokenType::LPAREN,
                 literal: "(".to_string(),
             },
             Token {
-                r#type: RPAREN.to_string(),
+                r#type: TokenType::RPAREN,
                 literal: ")".to_string(),
             },
             Token {
-                r#type: LBRACE.to_string(),
+                r#type: TokenType::LBRACE,
                 literal: "{".to_string(),
             },
             Token {
-                r#type: RBRACE.to_string(),
+                r#type: TokenType::RBRACE,
                 literal: "}".to_string(),
             },
             Token {
-                r#type: COMMA.to_string(),
+                r#type: TokenType::COMMA,
                 literal: ",".to_string(),
             },
             Token {
-                r#type: SEMICOLON.to_string(),
+                r#type: TokenType::SEMICOLON,
                 literal: ";".to_string(),
             },
             Token {
-                r#type: EOF.to_string(),
+                r#type: TokenType::EOF,
                 literal: "\0".to_string(),
             },
         ];
