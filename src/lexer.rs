@@ -34,6 +34,12 @@ impl Lexer {
             ')' => Self::new_token(TokenType::RPAREN, self.ch),
             ',' => Self::new_token(TokenType::COMMA, self.ch),
             '+' => Self::new_token(TokenType::PLUS, self.ch),
+            '-' => Self::new_token(TokenType::MINUS, self.ch),
+            '!' => Self::new_token(TokenType::BANG, self.ch),
+            '/' => Self::new_token(TokenType::SLASH, self.ch),
+            '*' => Self::new_token(TokenType::ASTERISK, self.ch),
+            '<' => Self::new_token(TokenType::LT, self.ch),
+            '>' => Self::new_token(TokenType::GT, self.ch),
             '{' => Self::new_token(TokenType::LBRACE, self.ch),
             '}' => Self::new_token(TokenType::RBRACE, self.ch),
             '\0' => Self::new_token(TokenType::EOF, self.ch),
@@ -196,6 +202,8 @@ mod tests {
         };
         
         let result = add(five, ten);
+        !-/*5;
+        5 < 10 > 5;
        "#
         .to_string();
 
@@ -343,6 +351,58 @@ mod tests {
             Token {
                 r#type: TokenType::SEMICOLON,
                 literal: ";".to_string(),
+            },
+            Token {
+                r#type: TokenType::BANG,
+                literal: "!".to_string(),
+            },
+            Token {
+                r#type: TokenType::MINUS,
+                literal: "-".to_string(),
+            },
+            Token {
+                r#type: TokenType::SLASH,
+                literal: "/".to_string(),
+            },
+            Token {
+                r#type: TokenType::ASTERISK,
+                literal: "*".to_string(),
+            },
+            Token {
+                r#type: TokenType::INT,
+                literal: "5".to_string(),
+            },
+            Token {
+                r#type: TokenType::SEMICOLON,
+                literal: ";".to_string(),
+            },
+            Token {
+                r#type: TokenType::INT,
+                literal: "5".to_string(),
+            },
+            Token {
+                r#type: TokenType::LT,
+                literal: "<".to_string(),
+            },
+            Token {
+                r#type: TokenType::INT,
+                literal: "10".to_string(),
+            },
+            Token {
+                r#type: TokenType::GT,
+                literal: ">".to_string(),
+            },
+            Token {
+                r#type: TokenType::INT,
+                literal: "5".to_string(),
+            },
+            Token {
+                r#type: TokenType::SEMICOLON,
+                literal: ";".to_string(),
+            },
+            Token {
+                r#type: TokenType::EOF,
+                literal: "\0".to_string(),
             },
         ];
 
