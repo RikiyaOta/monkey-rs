@@ -28,14 +28,38 @@ impl Lexer {
         self.skip_whitespace();
 
         let token = match self.ch {
-            '=' => Self::new_token(TokenType::ASSIGN, self.ch),
+            '=' => {
+                if self.peek_char() == '=' {
+                    let ch = self.ch;
+                    self.read_char();
+                    let literal = ch.to_string() + &self.ch.to_string();
+                    Token {
+                        r#type: TokenType::EQ,
+                        literal,
+                    }
+                } else {
+                    Self::new_token(TokenType::ASSIGN, self.ch)
+                }
+            }
             ';' => Self::new_token(TokenType::SEMICOLON, self.ch),
             '(' => Self::new_token(TokenType::LPAREN, self.ch),
             ')' => Self::new_token(TokenType::RPAREN, self.ch),
             ',' => Self::new_token(TokenType::COMMA, self.ch),
             '+' => Self::new_token(TokenType::PLUS, self.ch),
             '-' => Self::new_token(TokenType::MINUS, self.ch),
-            '!' => Self::new_token(TokenType::BANG, self.ch),
+            '!' => {
+                if self.peek_char() == '=' {
+                    let ch = self.ch;
+                    self.read_char();
+                    let literal = ch.to_string() + &self.ch.to_string();
+                    Token {
+                        r#type: TokenType::NEQ,
+                        literal,
+                    }
+                } else {
+                    Self::new_token(TokenType::BANG, self.ch)
+                }
+            }
             '/' => Self::new_token(TokenType::SLASH, self.ch),
             '*' => Self::new_token(TokenType::ASTERISK, self.ch),
             '<' => Self::new_token(TokenType::LT, self.ch),
@@ -138,6 +162,19 @@ impl Lexer {
         self.position += 1;
         self.read_position += 1;
     }
+
+    // NOTE: read_char とほぼ同じ。
+    // こちらは、覗き見（peek）をするだけ。いわゆる『先読み』する処理。
+    fn peek_char(&self) -> char {
+        if self.read_position >= self.input.len().try_into().unwrap() {
+            '\0'
+        } else {
+            self.input
+                .chars()
+                .nth(self.read_position.try_into().unwrap())
+                .unwrap()
+        }
+    }
 }
 
 #[cfg(test)]
@@ -217,6 +254,9 @@ mod tests {
         } else {
             return false;
         }
+        
+        10 == 10;
+        10 != 9;
        "#
         .to_string();
 
@@ -413,24 +453,106 @@ mod tests {
                 r#type: TokenType::SEMICOLON,
                 literal: ";".to_string(),
             },
-            Token {r#type: TokenType::IF, literal: "if".to_string()},
-            Token {r#type: TokenType::LPAREN, literal: "(".to_string()},
-            Token { r#type: TokenType::INT, literal: "5".to_string(), },
-            Token { r#type: TokenType::LT, literal: "<".to_string(), },
-            Token { r#type: TokenType::INT, literal: "10".to_string(), },
-            Token {r#type: TokenType::RPAREN, literal: ")".to_string()},
-            Token {r#type: TokenType::LBRACE, literal: "{".to_string()},
-            Token {r#type: TokenType::RETURN, literal: "return".to_string()},
-            Token {r#type: TokenType::TRUE, literal: "true".to_string()},
-            Token { r#type: TokenType::SEMICOLON, literal: ";".to_string() },
-            Token {r#type: TokenType::RBRACE, literal: "}".to_string()},
-            Token {r#type: TokenType::ELSE, literal: "else".to_string()},
-            Token {r#type: TokenType::LBRACE, literal: "{".to_string()},
-            Token {r#type: TokenType::RETURN, literal: "return".to_string()},
-            Token {r#type: TokenType::FALSE, literal: "false".to_string()},
-            Token { r#type: TokenType::SEMICOLON, literal: ";".to_string() },
-            Token {r#type: TokenType::RBRACE, literal: "}".to_string()},
-
+            Token {
+                r#type: TokenType::IF,
+                literal: "if".to_string(),
+            },
+            Token {
+                r#type: TokenType::LPAREN,
+                literal: "(".to_string(),
+            },
+            Token {
+                r#type: TokenType::INT,
+                literal: "5".to_string(),
+            },
+            Token {
+                r#type: TokenType::LT,
+                literal: "<".to_string(),
+            },
+            Token {
+                r#type: TokenType::INT,
+                literal: "10".to_string(),
+            },
+            Token {
+                r#type: TokenType::RPAREN,
+                literal: ")".to_string(),
+            },
+            Token {
+                r#type: TokenType::LBRACE,
+                literal: "{".to_string(),
+            },
+            Token {
+                r#type: TokenType::RETURN,
+                literal: "return".to_string(),
+            },
+            Token {
+                r#type: TokenType::TRUE,
+                literal: "true".to_string(),
+            },
+            Token {
+                r#type: TokenType::SEMICOLON,
+                literal: ";".to_string(),
+            },
+            Token {
+                r#type: TokenType::RBRACE,
+                literal: "}".to_string(),
+            },
+            Token {
+                r#type: TokenType::ELSE,
+                literal: "else".to_string(),
+            },
+            Token {
+                r#type: TokenType::LBRACE,
+                literal: "{".to_string(),
+            },
+            Token {
+                r#type: TokenType::RETURN,
+                literal: "return".to_string(),
+            },
+            Token {
+                r#type: TokenType::FALSE,
+                literal: "false".to_string(),
+            },
+            Token {
+                r#type: TokenType::SEMICOLON,
+                literal: ";".to_string(),
+            },
+            Token {
+                r#type: TokenType::RBRACE,
+                literal: "}".to_string(),
+            },
+            Token {
+                r#type: TokenType::INT,
+                literal: "10".to_string(),
+            },
+            Token {
+                r#type: TokenType::EQ,
+                literal: "==".to_string(),
+            },
+            Token {
+                r#type: TokenType::INT,
+                literal: "10".to_string(),
+            },
+            Token {
+                r#type: TokenType::SEMICOLON,
+                literal: ";".to_string(),
+            },
+            Token {
+                r#type: TokenType::INT,
+                literal: "10".to_string(),
+            },
+            Token {
+                r#type: TokenType::NEQ,
+                literal: "!=".to_string(),
+            },
+            Token {
+                r#type: TokenType::INT,
+                literal: "9".to_string(),
+            },
+            Token {
+                r#type: TokenType::SEMICOLON,
+                literal: ";".to_string(),
+            },
             Token {
                 r#type: TokenType::EOF,
                 literal: "\0".to_string(),

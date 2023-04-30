@@ -27,7 +27,10 @@ pub enum TokenType {
     FALSE,
     IF,
     ELSE,
-    RETURN
+    RETURN,
+
+    EQ,  // ==
+    NEQ, // !=
 }
 
 #[derive(Debug)]
