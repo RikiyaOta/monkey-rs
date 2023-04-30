@@ -62,10 +62,17 @@ impl Lexer {
         };
 
         // ATTENTION:
+        // 2文字以上のキーワードや数字については、すでに次の文字に進んでいるので、その場合は read_char() は実行しない。
+        // TODO: もっと簡潔にこれを実現したい！
         if token.r#type != TokenType::INT
             && token.r#type != TokenType::IDENT
             && token.r#type != TokenType::FUNCTION
             && token.r#type != TokenType::LET
+            && token.r#type != TokenType::TRUE
+            && token.r#type != TokenType::FALSE
+            && token.r#type != TokenType::IF
+            && token.r#type != TokenType::ELSE
+            && token.r#type != TokenType::RETURN
         {
             self.read_char();
         }
@@ -204,6 +211,12 @@ mod tests {
         let result = add(five, ten);
         !-/*5;
         5 < 10 > 5;
+        
+        if (5 < 10) {
+            return true;
+        } else {
+            return false;
+        }
        "#
         .to_string();
 
@@ -400,6 +413,24 @@ mod tests {
                 r#type: TokenType::SEMICOLON,
                 literal: ";".to_string(),
             },
+            Token {r#type: TokenType::IF, literal: "if".to_string()},
+            Token {r#type: TokenType::LPAREN, literal: "(".to_string()},
+            Token { r#type: TokenType::INT, literal: "5".to_string(), },
+            Token { r#type: TokenType::LT, literal: "<".to_string(), },
+            Token { r#type: TokenType::INT, literal: "10".to_string(), },
+            Token {r#type: TokenType::RPAREN, literal: ")".to_string()},
+            Token {r#type: TokenType::LBRACE, literal: "{".to_string()},
+            Token {r#type: TokenType::RETURN, literal: "return".to_string()},
+            Token {r#type: TokenType::TRUE, literal: "true".to_string()},
+            Token { r#type: TokenType::SEMICOLON, literal: ";".to_string() },
+            Token {r#type: TokenType::RBRACE, literal: "}".to_string()},
+            Token {r#type: TokenType::ELSE, literal: "else".to_string()},
+            Token {r#type: TokenType::LBRACE, literal: "{".to_string()},
+            Token {r#type: TokenType::RETURN, literal: "return".to_string()},
+            Token {r#type: TokenType::FALSE, literal: "false".to_string()},
+            Token { r#type: TokenType::SEMICOLON, literal: ";".to_string() },
+            Token {r#type: TokenType::RBRACE, literal: "}".to_string()},
+
             Token {
                 r#type: TokenType::EOF,
                 literal: "\0".to_string(),
