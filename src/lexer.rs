@@ -1,23 +1,47 @@
 use crate::token::Token;
 
+#[derive(Debug, Default)]
 pub struct Lexer {
     // 入力
     input: String,
     // 入力における現在の位置
     position: u32,
     // これから読み込む位置（現在の文字の次）
-    readPosition: u32,
+    read_position: u32,
     // 現在検査中の文字
     ch: char,
 }
 
 impl Lexer {
-    fn new(_input: String) -> Self {
-        unimplemented!()
+    fn new(input: String) -> Self {
+        let mut lexer = Self {
+            input,
+            ..Default::default()
+        };
+
+        lexer.read_char();
+
+        lexer
     }
 
     fn next_token(&self) -> Token {
         unimplemented!()
+    }
+
+    fn read_char(&mut self) {
+        let len = self.input.len().try_into().unwrap();
+        let read_position = self.read_position;
+        if read_position >= len {
+            self.ch = '\0';
+        } else {
+            self.ch = (&self.input)
+                .chars()
+                .nth(read_position.try_into().unwrap())
+                .unwrap();
+        }
+
+        self.position += 1;
+        self.read_position += 1;
     }
 }
 
