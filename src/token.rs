@@ -23,6 +23,11 @@ pub enum TokenType {
     RBRACE,
     FUNCTION,
     LET,
+    TRUE,
+    FALSE,
+    IF,
+    ELSE,
+    RETURN
 }
 
 #[derive(Debug)]
@@ -35,6 +40,11 @@ pub fn lookup_ident(ident: &str) -> TokenType {
     match ident {
         "fn" => TokenType::FUNCTION,
         "let" => TokenType::LET,
+        "true" => TokenType::TRUE,
+        "false" => TokenType::FALSE,
+        "if" => TokenType::IF,
+        "else" => TokenType::ELSE,
+        "return" => TokenType::RETURN,
         _ => TokenType::IDENT,
     }
 }
