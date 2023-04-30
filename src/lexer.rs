@@ -1,4 +1,4 @@
-use crate::token::Token;
+use crate::token::*;
 
 #[derive(Debug, Default)]
 pub struct Lexer {
@@ -13,7 +13,7 @@ pub struct Lexer {
 }
 
 impl Lexer {
-    fn new(input: String) -> Self {
+    pub fn new(input: String) -> Self {
         let mut lexer = Self {
             input,
             ..Default::default()
@@ -24,8 +24,30 @@ impl Lexer {
         lexer
     }
 
-    fn next_token(&self) -> Token {
-        unimplemented!()
+    pub fn next_token(&mut self) -> Token {
+        let token = match self.ch {
+            '=' => Self::new_token(ASSIGN.to_string(), self.ch),
+            ';' => Self::new_token(SEMICOLON.to_string(), self.ch),
+            '(' => Self::new_token(LPAREN.to_string(), self.ch),
+            ')' => Self::new_token(RPAREN.to_string(), self.ch),
+            ',' => Self::new_token(COMMA.to_string(), self.ch),
+            '+' => Self::new_token(PLUS.to_string(), self.ch),
+            '{' => Self::new_token(LBRACE.to_string(), self.ch),
+            '}' => Self::new_token(RBRACE.to_string(), self.ch),
+            '\0' => Self::new_token(EOF.to_string(), self.ch),
+            _ => panic!("Unexpected token."),
+        };
+
+        self.read_char();
+
+        token
+    }
+
+    pub fn new_token(token_type: TokenType, ch: char) -> Token {
+        Token {
+            r#type: token_type,
+            literal: ch.to_string(),
+        }
     }
 
     fn read_char(&mut self) {
@@ -56,48 +78,48 @@ mod tests {
         // 入力を動的に受け付けるので、String の方が適している気がする。
         let input = "=+(){},;".to_string();
 
-        let tests = [
+        let test_tokens = [
             Token {
-                r#type: ASSIGN,
-                literal: "=",
+                r#type: ASSIGN.to_string(),
+                literal: "=".to_string(),
             },
             Token {
-                r#type: PLUS,
-                literal: "+",
+                r#type: PLUS.to_string(),
+                literal: "+".to_string(),
             },
             Token {
-                r#type: LPAREN,
-                literal: "(",
+                r#type: LPAREN.to_string(),
+                literal: "(".to_string(),
             },
             Token {
-                r#type: RPAREN,
-                literal: ")",
+                r#type: RPAREN.to_string(),
+                literal: ")".to_string(),
             },
             Token {
-                r#type: LBRACE,
-                literal: "{",
+                r#type: LBRACE.to_string(),
+                literal: "{".to_string(),
             },
             Token {
-                r#type: RBRACE,
-                literal: "}",
+                r#type: RBRACE.to_string(),
+                literal: "}".to_string(),
             },
             Token {
-                r#type: COMMA,
-                literal: ",",
+                r#type: COMMA.to_string(),
+                literal: ",".to_string(),
             },
             Token {
-                r#type: SEMICOLON,
-                literal: ";",
+                r#type: SEMICOLON.to_string(),
+                literal: ";".to_string(),
             },
             Token {
-                r#type: EOF,
-                literal: "",
+                r#type: EOF.to_string(),
+                literal: "\0".to_string(),
             },
         ];
 
-        let lexer = Lexer::new(input);
+        let mut lexer = Lexer::new(input);
 
-        for (i, token) in tests.iter().enumerate() {
+        for token in test_tokens.iter() {
             let tok = lexer.next_token();
 
             assert_eq!(tok.r#type, token.r#type);

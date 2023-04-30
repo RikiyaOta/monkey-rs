@@ -1,7 +1,9 @@
-pub type TokenType<'a> = &'a str;
-pub struct Token<'a> {
-    pub r#type: TokenType<'a>,
-    pub literal: &'a str,
+pub type TokenType = String;
+
+#[derive(Debug)]
+pub struct Token {
+    pub r#type: TokenType,
+    pub literal: String,
 }
 
 pub const ILLEGAL: &str = "ILLEGAL";
