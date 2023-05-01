@@ -16,7 +16,7 @@ pub trait Expression: Node {
 pub struct LetStatement<T: Expression> {
     token: Token,
     pub name: Identifier,
-    value: T,
+    pub value: T,
 }
 
 impl Node for LetStatement<ExpressionStatement> {
@@ -52,8 +52,8 @@ impl Expression for Identifier {
 // しかし、参照（ポインタ）ならサイズが確定する。
 // これが Box<> の1つの使い所！The Rust Programming Language にも書いてある！
 pub struct ExpressionStatement {
-    token: Token,
-    expression: Box<ExpressionStatement>,
+    pub token: Token,
+    pub expression: Box<ExpressionStatement>,
 }
 
 impl Node for ExpressionStatement {
@@ -69,4 +69,12 @@ impl Expression for ExpressionStatement {
 #[derive(Debug)]
 pub struct Program<T: Statement> {
     pub statements: Box<[T]>,
+}
+
+impl Program<LetStatement<ExpressionStatement>> {
+    pub fn new(let_statements: Box<[LetStatement<ExpressionStatement>]>) -> Self {
+        Self {
+            statements: let_statements,
+        }
+    }
 }

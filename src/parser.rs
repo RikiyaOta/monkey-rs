@@ -1,6 +1,6 @@
 use crate::ast::{ExpressionStatement, LetStatement, Program};
 use crate::lexer::Lexer;
-use crate::token::Token;
+use crate::token::{Token, TokenType};
 
 #[derive(Debug, Default)]
 pub struct Parser {
@@ -19,7 +19,7 @@ pub struct Parser {
 pub struct ParseError;
 
 impl Parser {
-    fn new(lexer: Lexer) -> Self {
+    pub fn new(lexer: Lexer) -> Self {
         let mut parser = Parser {
             lexer,
             ..Default::default()
@@ -31,7 +31,7 @@ impl Parser {
         parser
     }
 
-    fn next_token(&mut self) {
+    pub fn next_token(&mut self) {
         // やりたかったイメージはこう：
         // self.cur_token = self.peek_token;
         // self.peek_token = self.lexer.next_token();
@@ -39,17 +39,28 @@ impl Parser {
         self.peek_token = self.lexer.next_token();
     }
 
-    // TODO: これだと、LetStatement しか解析できないなぁ。
-    //fn parse_program(&self) -> Program<LetStatement<ExpressionStatement>> {
-    fn parse_program(&self) -> Result<Program<LetStatement<ExpressionStatement>>, ParseError> {
+    // TODO: これだと、LetStatement しか解析できないなぁ。.
+    pub fn parse_statement(&self) -> LetStatement<ExpressionStatement> {
         unimplemented!()
+    }
+
+    // TODO: これだと、LetStatement しか解析できないなぁ。.
+    pub fn parse_program(&self) -> Program<LetStatement<ExpressionStatement>> {
+        let mut let_statements: Vec<LetStatement<ExpressionStatement>> = vec![];
+
+        while self.cur_token.r#type != TokenType::EOF {
+            let let_statement = self.parse_statement();
+            let_statements.push(let_statement);
+        }
+
+        Program::new(let_statements.into())
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::Parser;
-    use crate::ast::{ExpressionStatement, LetStatement, Node, Statement};
+    use crate::ast::{ExpressionStatement, LetStatement, Node};
     use crate::lexer::Lexer;
 
     #[test]
@@ -62,11 +73,7 @@ mod tests {
 
         let lexer = Lexer::new(input);
         let parser = Parser::new(lexer);
-        let parse_result = parser.parse_program();
-
-        assert!(parse_result.is_ok());
-
-        let program = parse_result.unwrap();
+        let program = parser.parse_program();
 
         assert_eq!(program.statements.len(), 3);
 
