@@ -13,7 +13,7 @@ pub trait Expression: Node {
 }
 
 #[derive(Debug)]
-struct LetStatement<T: Expression> {
+pub struct LetStatement<T: Expression> {
     token: Token,
     name: Identifier,
     value: T,
@@ -51,7 +51,7 @@ impl Expression for Identifier {
 // 素直に再帰的なデータ構造を定義しようとすると、コンパイル時にサイズが決定できないので、コンパイルできない。
 // しかし、参照（ポインタ）ならサイズが確定する。
 // これが Box<> の1つの使い所！The Rust Programming Language にも書いてある！
-struct ExpressionStatement {
+pub struct ExpressionStatement {
     token: Token,
     expression: Box<ExpressionStatement>,
 }
@@ -68,15 +68,5 @@ impl Expression for ExpressionStatement {
 
 #[derive(Debug)]
 pub struct Program<T: Statement> {
-    statements: [T],
+    statements: Box<[T]>,
 }
-
-//impl Node for Program<T: Statement> {
-//   fn token_literal(&self) -> String {
-//       if self.statements.len() > 0 {
-//            self.statements[0].token_literal()
-//       } else {
-//            "".to_string();
-//       }
-//   }
-//}

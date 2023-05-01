@@ -1,5 +1,6 @@
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Default)]
 pub enum TokenType {
+    #[default]
     ILLEGAL,
     EOF,
     IDENT,
@@ -33,7 +34,7 @@ pub enum TokenType {
     NEQ, // !=
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Token {
     pub r#type: TokenType,
     pub literal: String,
