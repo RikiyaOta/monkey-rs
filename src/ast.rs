@@ -15,7 +15,7 @@ pub trait Expression: Node {
 #[derive(Debug)]
 pub struct LetStatement<T: Expression> {
     token: Token,
-    name: Identifier,
+    pub name: Identifier,
     value: T,
 }
 
@@ -30,9 +30,9 @@ impl Statement for LetStatement<ExpressionStatement> {
 }
 
 #[derive(Debug)]
-struct Identifier {
-    token: Token,
-    value: String,
+pub struct Identifier {
+    pub token: Token,
+    pub value: String,
 }
 
 impl Node for Identifier {
@@ -68,5 +68,5 @@ impl Expression for ExpressionStatement {
 
 #[derive(Debug)]
 pub struct Program<T: Statement> {
-    statements: Box<[T]>,
+    pub statements: Box<[T]>,
 }
